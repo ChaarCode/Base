@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>CharCode.Base</AssemblyName>
+    <RootNamespace>CharCode.Base</RootNamespace>
+    <Company>CharCode</Company>
+    <Authors>CharCode</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>
