@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CharCode.Base.Managers
+namespace CharCode.Base.Repositories
 {
     public class BaseRepository<T, TKey, TDbContext> : IBaseRepository<T, TKey>
         where T : class, IModel<TKey>, new()

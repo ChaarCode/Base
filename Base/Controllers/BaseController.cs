@@ -14,24 +14,24 @@ namespace CharCode.Base.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public abstract class BaseController<TManager, TModel, TViewModel, TKey> : ControllerBase
+    public abstract class BaseController<TRepository, TModel, TViewModel, TKey> : ControllerBase
         where TModel : class, IModel<TKey>
         where TViewModel : class, IViewModel<TKey>
-        where TManager : IBaseRepository<TModel, TKey>
+        where TRepository : IBaseRepository<TModel, TKey>
     {
-        protected readonly TManager _manager;
+        protected readonly TRepository _repository;
         protected readonly IMapper _mapper;
 
-        public BaseController(TManager manager, IMapper mapper)
+        public BaseController(TRepository repository, IMapper mapper)
         {
-            _manager = manager;
+            _repository = repository;
             _mapper = mapper;
         }
 
         [HttpPost("{id}")]
         public async Task<ActionResult<TViewModel>> GetAsync(TKey id)
         {
-            var item = await _manager.GetAsync(id);
+            var item = await _repository.GetAsync(id);
 
             var result = _mapper.Map<TViewModel>(item);
 
@@ -63,8 +63,8 @@ namespace CharCode.Base.Controllers
         {
             config = GetConfig(config);
 
-            var itemsList = await _manager.GetAsync(config);
-            var count = await _manager.GetCountAsync(config);
+            var itemsList = await _repository.GetAsync(config);
+            var count = await _repository.GetCountAsync(config);
 
             var items = itemsList.Select(i => _mapper.Map<TViewModel>(i)).ToList();
 
@@ -85,7 +85,7 @@ namespace CharCode.Base.Controllers
 
             var modelObject = _mapper.Map<TModel>(obj);
 
-            await _manager.UpdateAsync(id, modelObject);
+            await _repository.UpdateAsync(id, modelObject);
 
             return Ok();
         }
@@ -98,7 +98,7 @@ namespace CharCode.Base.Controllers
 
             var modelObject = _mapper.Map<TModel>(obj);
 
-            var insertedObject = await _manager.InsertAsync(modelObject);
+            var insertedObject = await _repository.InsertAsync(modelObject);
 
             var result = _mapper.Map<TViewModel>(insertedObject);
 
