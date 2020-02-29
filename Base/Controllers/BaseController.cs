@@ -14,7 +14,7 @@ namespace CharCode.Base.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public abstract class BringoBaseController<TManager, TModel, TViewModel, TKey> : ControllerBase
+    public abstract class BaseController<TManager, TModel, TViewModel, TKey> : ControllerBase
         where TModel : class, IModel<TKey>
         where TViewModel : class, IViewModel<TKey>
         where TManager : IBaseRepository<TModel, TKey>
@@ -22,7 +22,7 @@ namespace CharCode.Base.Controllers
         protected readonly TManager _manager;
         protected readonly IMapper _mapper;
 
-        public BringoBaseController(TManager manager, IMapper mapper)
+        public BaseController(TManager manager, IMapper mapper)
         {
             _manager = manager;
             _mapper = mapper;
@@ -106,12 +106,12 @@ namespace CharCode.Base.Controllers
         }
     }
 
-    public abstract class BringoBaseController<TManager, TModel, TViewModel> : BringoBaseController<TManager, TModel, TViewModel, long>
+    public abstract class BaseController<TManager, TModel, TViewModel> : BaseController<TManager, TModel, TViewModel, long>
         where TModel : class, IModel
         where TViewModel : class, IViewModel
-        where TManager : BaseRepository<TModel>
+        where TManager : IBaseRepository<TModel>
     {
-        public BringoBaseController(TManager manager, IMapper mapper) : base(manager, mapper)
+        public BaseController(TManager manager, IMapper mapper) : base(manager, mapper)
         {
         }
     }
