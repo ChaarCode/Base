@@ -16,7 +16,7 @@ namespace CharCode.Base.Abstraction
         Task InsertAsync(IEnumerable<T> entities);
         Task UpdateAsync(TKey id, T entity);
     }
-    public interface BaseRepository<T> : IBaseRepository<T, long> where T : IModel
+    public interface IBaseRepository<T> : IBaseRepository<T, long> where T : IModel
     {
     }
 }
