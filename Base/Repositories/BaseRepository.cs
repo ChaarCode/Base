@@ -10,11 +10,13 @@ using System.Threading.Tasks;
 
 namespace CharCode.Base.Managers
 {
-    public class BaseRepository<T, TKey> : IBaseRepository<T, TKey> where T : class, IModel<TKey>, new()
+    public class BaseRepository<T, TKey, TDbContext> : IBaseRepository<T, TKey>
+        where T : class, IModel<TKey>, new()
+        where TDbContext : DbContext
     {
-        protected DbContext Context { get; private set; }
+        protected TDbContext Context { get; private set; }
         protected IQueryable<T> DbSet => GetObjects();
-        public BaseRepository(DbContext bringoDbContext)
+        public BaseRepository(TDbContext bringoDbContext)
         {
             Context = bringoDbContext;
         }
@@ -142,9 +144,11 @@ namespace CharCode.Base.Managers
         }
     }
 
-    public class BaseRepository<T> : BaseRepository<T, long> where T : class, IModel, new()
+    public class BaseRepository<T, TDbContext> : BaseRepository<T, long, TDbContext> 
+        where T : class, IModel, new()
+        where TDbContext : DbContext
     {
-        public BaseRepository(DbContext bringoDbContext) : base(bringoDbContext)
+        public BaseRepository(TDbContext bringoDbContext) : base(bringoDbContext)
         {
         }
     }
