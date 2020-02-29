@@ -16,7 +16,8 @@ using System.Threading.Tasks;
 
 namespace CharCode.Base.Controllers
 {
-    public abstract class UserController<TUser, TUserViewModel> : BaseController<IUserRepository<TUser>, TUser, TUserViewModel, string>
+    public abstract class UserController<TRepository , TUser, TUserViewModel> : BaseController<TRepository, TUser, TUserViewModel, string>
+        where TRepository: IUserRepository<TUser>
         where TUser : User, new()
         where TUserViewModel : UserViewModel
     {
@@ -28,7 +29,7 @@ namespace CharCode.Base.Controllers
             IConfiguration configuration,
             Microsoft.AspNetCore.Identity.UserManager<User> userManager,
             SignInManager<User> signInManager,
-            IUserRepository<TUser> repository
+            TRepository repository
             )
             : base(repository, mapper)
         {
