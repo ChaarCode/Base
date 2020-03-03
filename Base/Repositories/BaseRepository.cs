@@ -58,7 +58,7 @@ namespace CharCode.Base.Repositories
             return dbset.Filter(config);
         }
 
-        private static IQueryable<T> PaginationItems(IQueryable<T> result, PaginationConfig config)
+        protected virtual IQueryable<T> PaginationItems(IQueryable<T> result, PaginationConfig config)
         {
             if (config.Take == -1)
                 return result;
