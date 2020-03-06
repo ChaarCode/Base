@@ -91,7 +91,7 @@ namespace CharCode.Base.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> InsertAsync([FromBody]TViewModel obj)
+        public virtual async Task<ActionResult<TViewModel>> InsertAsync([FromBody]TViewModel obj)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
