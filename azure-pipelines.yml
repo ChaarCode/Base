@@ -34,9 +34,6 @@ steps:
     configuration: '$(buildConfiguration)'
 
 - task: NuGetAuthenticate@0
-  displayName: 'NuGet Authenticate'
-
-- task: NuGetAuthenticate@0
   inputs:
     nuGetServiceConnections: 'CharCode.Base Nuget'
 
