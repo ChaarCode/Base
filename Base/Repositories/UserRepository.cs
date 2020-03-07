@@ -84,7 +84,7 @@ namespace CharCode.Base.Repositories
 
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
                 throw new ArgumentException();
         }
 
@@ -126,7 +126,7 @@ namespace CharCode.Base.Repositories
         {
             var user = await this.GetByUserNameAsync(userName);
 
-            if( user is null || !(await CheckPasswordAsync(password, user)).Succeeded)
+            if (user is null || !(await CheckPasswordAsync(password, user)).Succeeded)
                 throw new ArgumentException("نام کاربری یا رمز عبور اشتباه است.");
 
             var token = GetToken(user);

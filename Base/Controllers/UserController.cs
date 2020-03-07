@@ -17,12 +17,12 @@ using System.Threading.Tasks;
 
 namespace CharCode.Base.Controllers
 {
-    public abstract class UserController<TRepository , TUser, TUserViewModel> : BaseController<TRepository, TUser, TUserViewModel, string>
-        where TRepository: IUserRepository<TUser>
+    public abstract class UserController<TRepository, TUser, TUserViewModel> : BaseController<TRepository, TUser, TUserViewModel, string>
+        where TRepository : IUserRepository<TUser>
         where TUser : User, new()
         where TUserViewModel : UserViewModel
     {
-        public UserController( IMapper mapper, TRepository repository
+        public UserController(IMapper mapper, TRepository repository
             )
             : base(repository, mapper)
         {
@@ -30,15 +30,22 @@ namespace CharCode.Base.Controllers
 
         public override async Task<ActionResult<TUserViewModel>> InsertAsync([FromBody] TUserViewModel userViewModel)
         {
-            userViewModel.Id = Guid.NewGuid().ToString();
+            try
+            {
+                userViewModel.Id = Guid.NewGuid().ToString();
 
-            var user = _mapper.Map<TUser>(userViewModel);
+                var user = _mapper.Map<TUser>(userViewModel);
 
-            var insertedUser = await _repository.InsertAsync(user, userViewModel.Password);
+                var insertedUser = await _repository.InsertAsync(user, userViewModel.Password);
 
-            var result = _mapper.Map<TUserViewModel>(insertedUser);
+                var result = _mapper.Map<TUserViewModel>(insertedUser);
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         public override async Task<IActionResult> UpdateAsync(string id, [FromBody] TUserViewModel obj)
@@ -64,14 +71,21 @@ namespace CharCode.Base.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginAsync([FromBody]LoginViewModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            var token = await _repository.LoginAsync(model.UserName, model.Password);
+                var token = await _repository.LoginAsync(model.UserName, model.Password);
 
-            var result = new { token };
+                var result = new { token };
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost]
@@ -97,6 +111,6 @@ namespace CharCode.Base.Controllers
             return Ok();
         }
 
-        
+
     }
 }
