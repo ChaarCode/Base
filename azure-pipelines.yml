@@ -36,11 +36,9 @@ steps:
 - task: NuGetAuthenticate@0
   displayName: 'NuGet Authenticate'
 
-- task: NuGetCommand@2
+- task: NuGetAuthenticate@0
   inputs:
-    command: 'pack'
-    packagesToPack: '**/*.csproj'
-    versioningScheme: 'off'
+    nuGetServiceConnections: 'CharCode.Base Nuget'
 
 - task: NuGetCommand@2
   inputs:
