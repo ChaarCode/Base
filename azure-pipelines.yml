@@ -33,13 +33,4 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: NuGetAuthenticate@0
-  inputs:
-    nuGetServiceConnections: 'CharCode.Base Nuget'
-
-- task: NuGetCommand@2
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: '82321e09-8505-4977-ac44-d31dbdd759da'
+- script: dotnet nuget push -Source https://api.nuget.org/v3/index.json  -ApiKey oy2olbhgz34rexftqxza34dvgcaaywretmvfo5naojcmja  '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
