@@ -19,14 +19,6 @@ steps:
 
 - task: NuGetCommand@2
   inputs:
-    command: 'pack'
-    packagesToPack: '**/*.csproj'
-    versioningScheme: 'off'
-
-- script: nuget push -Source https://api.nuget.org/v3/index.json  -ApiKey oy2olbhgz34rexftqxza34dvgcaaywretmvfo5naojcmja  '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-
-- task: NuGetCommand@2
-  inputs:
     restoreSolution: '$(solution)'
 
 - task: VSBuild@1
@@ -41,3 +33,11 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    versioningScheme: 'off'
+
+- script: nuget push -Source https://api.nuget.org/v3/index.json  -ApiKey oy2olbhgz34rexftqxza34dvgcaaywretmvfo5naojcmja  '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
