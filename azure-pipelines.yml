@@ -39,5 +39,9 @@ steps:
     command: 'pack'
     packagesToPack: '**/*.csproj'
     versioningScheme: 'off'
-
-- script: nuget push -Source https://api.nuget.org/v3/index.json  -ApiKey oy2olbhgz34rexftqxza34dvgcaaywretmvfo5naojcmja  '$(Build.ArtifactStagingDirectory)*.nupkg;!$(Build.ArtifactStagingDirectory)*.symbols.nupkg'
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'CharCode.Base Nuget'
