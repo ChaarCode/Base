@@ -67,10 +67,6 @@ namespace CharCode.Base.Repositories
 
         public virtual async Task ChangePasswordAsync(T user, string password)
         {
-            var isValid = await _userManager.CheckPasswordAsync(user, password);
-            if (!isValid)
-                throw new ArgumentException();
-
             await _userManager.RemovePasswordAsync(user);
             await _userManager.AddPasswordAsync(user, password);
         }
