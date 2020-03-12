@@ -136,7 +136,7 @@ namespace CharCode.Base.Repositories
             return stringToken;
         }
 
-        private virtual async Task<SignInResult> CheckPasswordAsync(string password, T user)
+        private async Task<SignInResult> CheckPasswordAsync(string password, T user)
         {
             return await _signInManager.CheckPasswordSignInAsync(user, password, false);
         }
