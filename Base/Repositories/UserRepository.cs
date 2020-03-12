@@ -65,7 +65,7 @@ namespace CharCode.Base.Repositories
             }
         }
 
-        public async Task ChangePasswordAsync(T user, string password)
+        public virtual async Task ChangePasswordAsync(T user, string password)
         {
             var isValid = await _userManager.CheckPasswordAsync(user, password);
             if (!isValid)
@@ -76,7 +76,7 @@ namespace CharCode.Base.Repositories
         }
 
 
-        public async Task ChangePasswordAsync(T user, string currentPassword, string newPassword)
+        public virtual async Task ChangePasswordAsync(T user, string currentPassword, string newPassword)
         {
             var isValid = await _userManager.CheckPasswordAsync(user, newPassword);
             if (!isValid)
@@ -136,7 +136,7 @@ namespace CharCode.Base.Repositories
             return stringToken;
         }
 
-        private async Task<SignInResult> CheckPasswordAsync(string password, T user)
+        private virtual async Task<SignInResult> CheckPasswordAsync(string password, T user)
         {
             return await _signInManager.CheckPasswordSignInAsync(user, password, false);
         }
