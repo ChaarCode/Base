@@ -39,42 +39,18 @@ namespace CharCode.Base.Repositories
 
         public virtual async Task<List<T>> GetAsync(PaginationConfig config)
         {
-            var filteredResult = FilterItems(DbSet, config);
-            var sortedResult = SortItems(filteredResult, config);
-            var result = PaginationItems(sortedResult, config);
+            var filteredResult = DbSet.Filter(config);
+            var sortedResult = filteredResult.Sort(config.Order, config.SortColumn);
+            var result = sortedResult.Paginate(config.Skip, config.Take);
 
             return await result.ToListAsync();
         }
 
         public virtual async Task<long> GetCountAsync(PaginationConfig config)
         {
-            var filteredResult = FilterItems(DbSet, config);
+            var filteredResult = DbSet.Filter(config);
 
             return await filteredResult.LongCountAsync();
-        }
-
-        protected virtual IQueryable<T> FilterItems(IQueryable<T> dbset, PaginationConfig config)
-        {
-            return dbset.Filter(config);
-        }
-
-        protected virtual IQueryable<T> PaginationItems(IQueryable<T> result, PaginationConfig config)
-        {
-            if (config.Take == -1)
-                return result;
-
-            return result.Skip(config.Skip).Take(config.Take);
-        }
-
-        protected virtual IQueryable<T> SortItems(IQueryable<T> dbset, PaginationConfig config)
-        {
-            if (config.Order is null)
-                return dbset;
-
-            if (config.Order.Equals("asc"))
-                return dbset.OrderBy(config.SortColumn);
-            else
-                return dbset.OrderByDescending(config.SortColumn);
         }
 
         protected virtual bool TryGet(TKey id, out T entity)

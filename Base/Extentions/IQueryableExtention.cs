@@ -67,12 +67,12 @@ namespace CharCode.Base.Extentions
         public static IQueryable<T> Filter<T>(this IQueryable<T> source, PaginationConfig config)
         {
            if (config.Logic == ExpressionFilterLogic.And)
-                return FilterByAndLogic(source, config);
+                return source.FilterByAndLogic(config);
             else
-                return FilterByOrLogic(source, config);
+                return source.FilterByOrLogic(config);
         }
 
-        private static IQueryable<T> FilterByOrLogic<T>(IQueryable<T> source, PaginationConfig config)
+        private static IQueryable<T> FilterByOrLogic<T>(this IQueryable<T> source, PaginationConfig config)
         {
             IQueryable<T> result = null;
 
@@ -87,13 +87,29 @@ namespace CharCode.Base.Extentions
             return result;
         }
 
-        private static IQueryable<T> FilterByAndLogic<T>(IQueryable<T> source, PaginationConfig config)
+        private static IQueryable<T> FilterByAndLogic<T>(this IQueryable<T> source, PaginationConfig config)
         {
             var result = source;
             foreach (var filter in config.ExpressionFilters)
                 result = result.Filter(filter);
 
             return result;
+        }
+
+        public static IQueryable<T> Sort<T>(this IQueryable<T> source, string order, string sortColumn)
+        {
+            if (order.Equals("asc"))
+                return source.OrderBy(sortColumn);
+            else
+                return source.OrderByDescending(sortColumn);
+        }
+
+        public static IQueryable<T> Paginate<T>(this IQueryable<T> source, int skip, int take)
+        {
+            if (take == -1)
+                return source.Skip(skip);
+
+            return source.Skip(skip).Take(take);
         }
     }
 }
