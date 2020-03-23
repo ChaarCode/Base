@@ -104,6 +104,14 @@ namespace CharCode.Base.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("{id}")]
+        public virtual async Task<IActionResult> DeleteAsync(TKey id)
+        {
+            await _repository.DeleteAsync(id);
+
+            return Ok();
+        }
     }
 
     public abstract class BaseController<TManager, TModel, TViewModel> : BaseController<TManager, TModel, TViewModel, long>
