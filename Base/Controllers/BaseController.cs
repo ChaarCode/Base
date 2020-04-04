@@ -29,7 +29,7 @@ namespace CharCode.Base.Controllers
         }
 
         [HttpPost("{id}")]
-        public async Task<ActionResult<TViewModel>> GetAsync(TKey id)
+        public virtual async Task<ActionResult<TViewModel>> GetAsync(TKey id)
         {
             var item = await _repository.GetAsync(id);
 
