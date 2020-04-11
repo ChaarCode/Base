@@ -69,7 +69,7 @@ namespace CharCode.Base.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> LoginAsync([FromBody]LoginViewModel model)
+        public virtual async Task<IActionResult> LoginAsync([FromBody]LoginViewModel model)
         {
             try
             {
