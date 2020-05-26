@@ -19,21 +19,21 @@ namespace CharCode.Base.Controllers
         where TViewModel : class, IViewModel<TKey>
         where TRepository : IBaseRepository<TModel, TKey>
     {
-        protected readonly TRepository _repository;
-        protected readonly IMapper _mapper;
+        protected readonly TRepository repository;
+        protected readonly IMapper mapper;
 
         public BaseController(TRepository repository, IMapper mapper)
         {
-            _repository = repository;
-            _mapper = mapper;
+            this.repository = repository;
+            this.mapper = mapper;
         }
 
         [HttpPost("{id}")]
         public virtual async Task<ActionResult<TViewModel>> GetAsync(TKey id)
         {
-            var item = await _repository.GetAsync(id);
+            var item = await repository.GetAsync(id);
 
-            var result = _mapper.Map<TViewModel>(item);
+            var result = mapper.Map<TViewModel>(item);
 
             return Ok(result);
         }
@@ -63,10 +63,10 @@ namespace CharCode.Base.Controllers
         {
             config = GetConfig(config);
 
-            var itemsList = await _repository.GetAsync(config);
-            var count = await _repository.GetCountAsync(config);
+            var itemsList = await repository.GetAsync(config);
+            var count = await repository.GetCountAsync(config);
 
-            var items = itemsList.Select(i => _mapper.Map<TViewModel>(i)).ToList();
+            var items = itemsList.Select(i => mapper.Map<TViewModel>(i)).ToList();
 
             var responece = new TableResponce<TViewModel>()
             {
@@ -83,9 +83,9 @@ namespace CharCode.Base.Controllers
             if (!ModelState.IsValid || !id.Equals(obj.Id))
                 return BadRequest();
 
-            var modelObject = _mapper.Map<TModel>(obj);
+            var modelObject = mapper.Map<TModel>(obj);
 
-            await _repository.UpdateAsync(id, modelObject);
+            await repository.UpdateAsync(id, modelObject);
 
             return Ok();
         }
@@ -96,11 +96,11 @@ namespace CharCode.Base.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var modelObject = _mapper.Map<TModel>(obj);
+            var modelObject = mapper.Map<TModel>(obj);
 
-            var insertedObject = await _repository.InsertAsync(modelObject);
+            var insertedObject = await repository.InsertAsync(modelObject);
 
-            var result = _mapper.Map<TViewModel>(insertedObject);
+            var result = mapper.Map<TViewModel>(insertedObject);
 
             return Ok(result);
         }
@@ -108,7 +108,7 @@ namespace CharCode.Base.Controllers
         [HttpPost("{id}")]
         public virtual async Task<IActionResult> DeleteAsync(TKey id)
         {
-            await _repository.DeleteAsync(id);
+            await repository.DeleteAsync(id);
 
             return Ok();
         }

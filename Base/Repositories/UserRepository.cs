@@ -18,9 +18,9 @@ namespace CharCode.Base.Repositories
         where T : User, new()
         where TDbContext : DbContext
     {
-        protected readonly UserManager<User> _userManager;
-        protected readonly SignInManager<User> _signInManager;
-        protected readonly IConfiguration _configuration;
+        protected readonly UserManager<User> userManager;
+        protected readonly SignInManager<User> signInManager;
+        protected readonly IConfiguration configuration;
 
         public UserRepository(
             TDbContext bringoDbContext,
@@ -28,9 +28,9 @@ namespace CharCode.Base.Repositories
             UserManager<User> userManager,
             SignInManager<User> signInManager) : base(bringoDbContext)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _configuration = configuration;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
+            this.configuration = configuration;
         }
 
         public virtual async Task<T> InsertAsync(T entity, string password)
@@ -40,7 +40,7 @@ namespace CharCode.Base.Repositories
             if (await IsExist(userName))
                 throw new ArgumentException("نام کاربری انتخاب شده موجود می‌باشد!");
 
-            var result = await _userManager.CreateAsync(entity, password);
+            var result = await userManager.CreateAsync(entity, password);
 
             return entity;
         }
@@ -55,7 +55,7 @@ namespace CharCode.Base.Repositories
             if (entity is null || !id.Equals(entity.Id))
                 throw new ArgumentException();
 
-            var result = await _userManager.UpdateAsync(entity);
+            var result = await userManager.UpdateAsync(entity);
 
             if (!result.Succeeded)
             {
@@ -63,83 +63,6 @@ namespace CharCode.Base.Repositories
                 var errorsMessage = string.Join("، ", errors);
                 throw new Exception(errorsMessage);
             }
-        }
-
-        public virtual async Task ChangePasswordAsync(T user, string password)
-        {
-            await _userManager.RemovePasswordAsync(user);
-            await _userManager.AddPasswordAsync(user, password);
-        }
-
-
-        public virtual async Task ChangePasswordAsync(T user, string currentPassword, string newPassword)
-        {
-            var isValid = await _userManager.CheckPasswordAsync(user, newPassword);
-            if (!isValid)
-                throw new ArgumentException();
-
-            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
-
-            if (!result.Succeeded)
-                throw new ArgumentException();
-        }
-
-
-        public async Task<T> GetByUserNameAsync(string userName)
-        {
-            return await GetObjects().SingleOrDefaultAsync(u => u.UserName.ToLower().Equals(userName.ToLower()));
-        }
-
-        protected virtual SecurityToken GetToken(User user)
-        {
-            var claims = new Claim[]
-            {
-                new Claim(ClaimTypes.Role, typeof(T).Name),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim("Id", user.Id)
-            };
-
-            string tokenKey = _configuration["Token:Key"];
-            byte[] tokenKeyEncoded = Encoding.ASCII.GetBytes(tokenKey);
-            var key = new SymmetricSecurityKey(tokenKeyEncoded);
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            var tokenDescriptor = new SecurityTokenDescriptor()
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = creds
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return token;
-        }
-
-        public virtual async Task<string> LoginAsync(string userName, string password)
-        {
-            var user = await this.GetByUserNameAsync(userName);
-
-            if (user is null || !(await CheckPasswordAsync(password, user)).Succeeded)
-                throw new ArgumentException("نام کاربری یا رمز عبور اشتباه است.");
-
-            var token = GetToken(user);
-
-            string stringToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return stringToken;
-        }
-
-        private async Task<SignInResult> CheckPasswordAsync(string password, T user)
-        {
-            return await _signInManager.CheckPasswordSignInAsync(user, password, false);
-        }
-
-        public virtual async Task LogoutAsync()
-        {
-            await _signInManager.SignOutAsync();
         }
     }
 }

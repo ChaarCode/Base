@@ -22,10 +22,12 @@ namespace CharCode.Base.Controllers
         where TUser : User, new()
         where TUserViewModel : UserViewModel
     {
-        public UserController(IMapper mapper, TRepository repository
-            )
+        private readonly IAuthenticationRepository authenticationRepository;
+
+        public UserController(IMapper mapper, TRepository repository, IAuthenticationRepository authenticationRepository)
             : base(repository, mapper)
         {
+            this.authenticationRepository = authenticationRepository ?? throw new ArgumentNullException(nameof(authenticationRepository));
         }
 
         public override async Task<ActionResult<TUserViewModel>> InsertAsync([FromBody] TUserViewModel userViewModel)
@@ -34,11 +36,11 @@ namespace CharCode.Base.Controllers
             {
                 userViewModel.Id = Guid.NewGuid().ToString();
 
-                var user = _mapper.Map<TUser>(userViewModel);
+                var user = mapper.Map<TUser>(userViewModel);
 
-                var insertedUser = await _repository.InsertAsync(user, userViewModel.Password);
+                var insertedUser = await repository.InsertAsync(user, userViewModel.Password);
 
-                var result = _mapper.Map<TUserViewModel>(insertedUser);
+                var result = mapper.Map<TUserViewModel>(insertedUser);
 
                 return Ok(result);
             }
@@ -47,67 +49,22 @@ namespace CharCode.Base.Controllers
                 return BadRequest(e.Message);
             }
         }
-
         public override async Task<IActionResult> UpdateAsync(string id, [FromBody] TUserViewModel obj)
         {
             if (!ModelState.IsValid || !id.Equals(obj.Id))
                 return BadRequest();
 
-            var user = await _repository.GetAsync(obj.Id);
+            var user = await repository.GetAsync(obj.Id);
 
-            _mapper.Map(obj, user);
+            mapper.Map(obj, user);
 
-            await _repository.UpdateAsync(obj.Id, user);
+            await repository.UpdateAsync(obj.Id, user);
 
             if (!string.IsNullOrWhiteSpace(obj.Password))
             {
-                await _repository.ChangePasswordAsync(user, obj.Password);
+                await this.authenticationRepository.ChangePasswordAsync(user, obj.Password);
             }
 
-            return Ok();
-        }
-
-        [AllowAnonymous]
-        [HttpPost]
-        public virtual async Task<IActionResult> LoginAsync([FromBody]LoginViewModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var token = await _repository.LoginAsync(model.UserName, model.Password);
-
-                var result = new { token };
-
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ChangePasswordAsync([FromBody]ChangePasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var userId = HttpContext.User.Claims.Single(c => c.Type.Equals("Id")).Value;
-            var user = await _repository.GetAsync(userId);
-
-            await _repository.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-
-            await _repository.LogoutAsync();
-
-            return Ok();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> LogoutAsync()
-        {
-            await _repository.LogoutAsync();
             return Ok();
         }
 
