@@ -15,7 +15,7 @@ namespace CharCode.Base.Controllers
     [Authorize]
     public abstract class BaseAuthenticationController : ControllerBase
     {
-        private readonly IAuthenticationRepository repository;
+        protected readonly IAuthenticationRepository repository;
 
         public BaseAuthenticationController(IAuthenticationRepository authenticationRepository)
         {
