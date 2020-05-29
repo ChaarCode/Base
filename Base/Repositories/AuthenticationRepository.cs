@@ -18,6 +18,15 @@ namespace CharCode.Base.Repositories
         protected readonly UserManager<User> userManager;
         protected readonly SignInManager<User> signInManager;
         protected readonly IConfiguration configuration;
+
+        public AuthenticationRepository(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, TDbContext context)
+        {
+            this.userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            this.signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
         protected TDbContext Context { get; private set; }
 
         public virtual async Task ChangePasswordAsync(User user, string password)
