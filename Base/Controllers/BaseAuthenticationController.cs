@@ -13,11 +13,11 @@ namespace CharCode.Base.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class AuthenticationController : ControllerBase
+    public abstract class BaseAuthenticationController : ControllerBase
     {
         private readonly IAuthenticationRepository repository;
 
-        public AuthenticationController(IAuthenticationRepository authenticationRepository)
+        public BaseAuthenticationController(IAuthenticationRepository authenticationRepository)
         {
             this.repository = authenticationRepository ?? throw new ArgumentNullException(nameof(authenticationRepository));
         }
