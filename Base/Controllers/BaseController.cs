@@ -29,7 +29,7 @@ namespace CharCode.Base.Controllers
         }
 
         [HttpPost("{id}")]
-        public virtual async Task<ActionResult<TViewModel>> GetAsync(TKey id)
+        public virtual async Task<IActionResult> GetAsync(TKey id)
         {
             var item = await repository.GetAsync(id);
 
@@ -59,7 +59,7 @@ namespace CharCode.Base.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<TableResponce<TViewModel>>> GetAsync([FromBody]PaginationConfig config)
+        public virtual async Task<IActionResult> GetAsync([FromBody]PaginationConfig config)
         {
             config = GetConfig(config);
 
@@ -91,7 +91,7 @@ namespace CharCode.Base.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<TViewModel>> InsertAsync([FromBody]TViewModel obj)
+        public virtual async Task<IActionResult> InsertAsync([FromBody]TViewModel obj)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
