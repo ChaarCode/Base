@@ -30,7 +30,7 @@ namespace CharCode.Base.Controllers
             this.authenticationRepository = authenticationRepository ?? throw new ArgumentNullException(nameof(authenticationRepository));
         }
 
-        public override async Task<ActionResult<TUserViewModel>> InsertAsync([FromBody] TUserViewModel userViewModel)
+        public override async Task<IActionResult> InsertAsync([FromBody] TUserViewModel userViewModel)
         {
             try
             {
