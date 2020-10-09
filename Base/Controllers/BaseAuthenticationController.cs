@@ -24,7 +24,7 @@ namespace CharCode.Base.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public virtual async Task<IActionResult> LoginAsync([FromBody]LoginViewModel model)
+        public virtual async Task<IActionResult> LoginAsync([FromBody] LoginViewModel model)
         {
             try
             {
@@ -44,18 +44,25 @@ namespace CharCode.Base.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> ChangePasswordAsync([FromBody]ChangePasswordViewModel model)
+        public virtual async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordViewModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            var userId = HttpContext.User.Claims.Single(c => c.Type.Equals("Id")).Value;
+                var userId = HttpContext.User.Claims.Single(c => c.Type.Equals("Id")).Value;
 
-            await this.repository.ChangePasswordAsync(userId, model.CurrentPassword, model.NewPassword);
+                await this.repository.ChangePasswordAsync(userId, model.CurrentPassword, model.NewPassword);
 
-            await this.repository.LogoutAsync();
+                await this.repository.LogoutAsync();
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost]
