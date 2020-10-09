@@ -1,4 +1,5 @@
 ﻿using CharCode.Base.Abstraction;
+using CharCode.Base.Exceptions;
 using CharCode.Base.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -44,9 +45,9 @@ namespace CharCode.Base.Repositories
 
         public virtual async Task ChangePasswordAsync(User user, string currentPassword, string newPassword)
         {
-            var isValid = await userManager.CheckPasswordAsync(user, newPassword);
+            var isValid = await userManager.CheckPasswordAsync(user, currentPassword);
             if (!isValid)
-                throw new ArgumentException();
+                throw new PasswordIncorrectException();
 
             var result = await userManager.ChangePasswordAsync(user, currentPassword, newPassword);
 
@@ -100,7 +101,7 @@ namespace CharCode.Base.Repositories
             var user = await this.GetByUserNameAsync(userName);
 
             if (user is null || !(await CheckPasswordAsync(password, user)).Succeeded)
-                throw new ArgumentException("نام کاربری یا رمز عبور اشتباه است.");
+                throw new PasswordIncorrectException("نام کاربری یا رمز عبور اشتباه است.");
 
             var token = GetToken(user);
 

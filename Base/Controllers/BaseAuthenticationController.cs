@@ -44,7 +44,7 @@ namespace CharCode.Base.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePasswordAsync([FromBody]ChangePasswordViewModel model)
+        public virtual async Task<IActionResult> ChangePasswordAsync([FromBody]ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
